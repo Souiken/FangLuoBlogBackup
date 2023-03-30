@@ -36,7 +36,7 @@ EndSection
 
 重启即可。
 
-### 方法2
+### 方法2（推荐）
 
 首先，使用独显直连模式启动系统，然后获取现在的显示器edid并放置到firmware中
 
@@ -51,30 +51,12 @@ sudo cp /sys/class/drm/card0-eDP-1/edid /usr/lib/firmware/edid/edid.bin
 drm.edid_firmware=eDP:edid/edid.bin
 ```
 
-## 使用Fn+R切换刷新率
+### Early KMS
 
-*注：混合显卡模式下可能只支持方法2添加的刷新率！*
+如果你开启了 [early KMS](https://wiki.archlinux.org/title/Kernel_mode_setting#Early_KMS_start) ，你还需要修改 `/etc/mkinitcpio.conf` 文件。
 
-首先安装`xbindkeys`
-
-```shell
-sudo pacman -S xbindkeys
-```
-
-然后编辑`~/.xbindkeysrc`（如果没有就新建一个），增加以下内容
-
-```shell
-#Set refresh rate
-"if xrandr | grep '60.01\*'; then xrandr -r 165; else xrandr -r 60; fi"
-    m:0x10 + c:248
-    Mod2 + NoSymbol
-```
-
-最后，需要让xbindkeys开机启动，编辑`/etc/xprofile`，加入一行
-
-```shell
-xbindkeys
-```
+找到 `FILES=()` 改为 `FILES=(/usr/lib/firmware/edid/edid.bin)` ，随后使用 `sudo mkinitcpio -P` 重新生成initramfs。
+*如果你用别的工具生成initramfs，自己查文档去！*
 
 ## 调整触控板滚动速度
 
@@ -87,5 +69,23 @@ xinput set-prop 'MSFT0001:00 04F3:31AD Touchpad' 'libinput Scrolling Pixel Dista
 其中`{int}`部分是一个整数，范围`10~50`，数字越大滚动越慢。请将`{int}`替换成一个你认为合适的数值。
 
 调整到合适的速度后将这行命令写入`/etc/xprofile`即可自动生效。
+
+有时候 `xinput set-prop` 设置的值会被重置，我们可以配置 `xorg.conf` 让它成为默认值。
+
+创建文件 `/etc/X11/xorg.conf.d/10-touchpad.conf` 写入以下内容
+
+```conf
+Section "InputClass"
+    MatchIsTouchpad "on"
+    Identifier "Touchpads"
+    Driver "libinput"
+    Option "HighResolutionWheelScrolling" "true"
+    Option "ScrollPixelDistance" "{int}"
+EndSection
+```
+
+`{int}`还是替换为先前的整数
+
+保存并重新启动X（例如重新登录）
 
 ## 未完待续

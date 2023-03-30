@@ -103,12 +103,6 @@ theme: volantis
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  # type: cos-cdn
-  # cloud: tencent
-  # bucket: blog-1253261604
-  # region: ap-chengdu
-  # secretId: AKIDYx6NRFn4A0cy4uVszqRntjIcfRvA7nCK
-  # secretKey: tWsxmKdgV4NPBi02oLcdOuABwRhgQt75
   type: git
   repo: https://github.com/YukisawaNya/YukisawaNya.github.io
   branch: pages
