@@ -79,7 +79,6 @@ Section "InputClass"
     MatchIsTouchpad "on"
     Identifier "Touchpads"
     Driver "libinput"
-    Option "HighResolutionWheelScrolling" "true"
     Option "ScrollPixelDistance" "{int}"
 EndSection
 ```
